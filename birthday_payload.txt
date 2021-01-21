@@ -75,10 +75,10 @@ Content-Disposition: form-data; name="publiccontact[note]"
 
 
 -----------------------------34756827626830096391607915779
-Content-Disposition: form-data; name="publiccontact[photo]"; filename=""
-Content-Type: application/octet-stream
+Content-Disposition: form-data; name="publiccontact[photo]"; filename="hello_noah.png"
+Content-Type: image/png
 
-
+YOUR_IMAGE_HERE
 -----------------------------34756827626830096391607915779
 Content-Disposition: form-data; name="publiccontact[hidden]"
 
