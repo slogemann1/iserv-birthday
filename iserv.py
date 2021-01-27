@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import requests
 import random
 import csv
@@ -64,7 +64,9 @@ def change_birthday(username, password):
     years = random.randint(17, 20)
     days = 6
     today = date.today()
-    birthday_date = date(today.year - years, today.month, today.day + days)
+    today_birth = date(day = today.day, month = today.month, year = today.year - years)
+    birthday_date = today_birth + timedelta(days = days)
+    
     birthday = birthday_date.strftime("%d.%m.%Y")
 
     # Send Post Request to Change
