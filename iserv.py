@@ -76,7 +76,7 @@ def change_birthday(username, password):
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Connection": "keep-alive",
         "Content-Length": str(len(birthday_payload)),
-        "Content-Type": "multipart/form-data; boundary=---------------------------34756827626830096391607915779"
+        "Content-Type": "application/x-www-form-urlencoded"
     }
 
     change_response = session.post(url=change_url, data=change_data, headers=change_headers)
@@ -85,24 +85,24 @@ def change_birthday(username, password):
 
 def create_payload(token, birthday):
     # Get Color for Image
-    hue_input = hue / 256.0
-    color = colorsys.hsv_to_rgb(hue_input, 1.0, 0.75)
-    color = (int(color[0] * 256), int(color[1] * 256), int(color[2] * 256))
+    # hue_input = hue / 256.0
+    # color = colorsys.hsv_to_rgb(hue_input, 1.0, 0.75)
+    # color = (int(color[0] * 256), int(color[1] * 256), int(color[2] * 256))
 
     # Create Image
-    img = Image.new("RGB", (256, 256), color)
-    buffer = BytesIO()
-    img.save(buffer, format="png")
-    image_data = bytes(buffer.getbuffer())
+    # img = Image.new("RGB", (256, 256), color)
+    # buffer = BytesIO()
+    # img.save(buffer, format="png")
+    # image_data = bytes(buffer.getbuffer())
 
     # Create Payload
     payload = birthday_payload.replace("YOUR_BIRTHDAY_HERE", birthday).replace("YOUR_TOKEN_HERE", token)
-    payload = payload.split("YOUR_IMAGE_HERE")
-    payload_1 = payload[0]
-    payload_2 = payload[1]
-    payload = bytearray(payload_1, "utf-8")
-    payload.extend(image_data)
-    payload.extend(bytes(payload_2, "utf-8"))
+    # payload = payload.split("YOUR_IMAGE_HERE")
+    # payload_1 = payload[0]
+    # payload_2 = payload[1]
+    # payload = bytearray(payload_1, "utf-8")
+    # payload.extend(image_data)
+    # payload.extend(bytes(payload_2, "utf-8"))
 
     return payload
 
