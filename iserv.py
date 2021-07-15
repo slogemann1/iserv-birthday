@@ -46,6 +46,8 @@ def change_birthday(username, password):
     }
     session.post(url=login_url, data=login_data, headers=login_headers)
 
+    # Change Birthday
+
     # Send Get Request to Retrive Form Token
     form_url = "https://fkggoettingen.de/iserv/profile/public/edit"
     form_response = session.get(url=form_url)
@@ -79,8 +81,42 @@ def change_birthday(username, password):
         "Content-Type": "application/x-www-form-urlencoded"
     }
 
-    change_response = session.post(url=change_url, data=change_data, headers=change_headers)
-    
+    session.post(url=change_url, data=change_data, headers=change_headers)
+
+    # Change to Dark Mode
+
+    # Request to Get Form Token
+    settings_url = "https://fkggoettingen.de/iserv/profile/settings"
+    form_response = session.get(url=settings_url)
+
+    print(form_response.text)
+
+    # Get the Form Token
+    token_regex = 'id="user_settings__token"[\\w\\W]*?value="([^"]*)"'
+    token_match = re.search(token_regex, form_response.text)
+    token = ""
+    if token_match == None:
+        print("Error regex failed to find token (dark mode)")
+        exit()
+    else:
+        token = token_match.group(1)
+
+    # Set the Settings Parameters
+    settings_payload = 'user_settings%5Blang%5D=de_DE&user_settings%5Bhide_app_ad%5D=1&user_settings%5Bsort%5D=firstname&user_settings%5Bcolor-scheme%5D=dark&user_settings%5Bsave%5D=&user_settings%5B_token%5D=YOUR_TOKEN_HERE'
+    settings_payload = settings_payload.replace('YOUR_TOKEN_HERE', token)
+
+    print(token)
+
+    # Send Request to Change Settings
+    settings_headers = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Connection": "keep-alive",
+        "Content-Length": str(len(settings_payload)),
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    set_chng = session.post(url=settings_url, data=settings_payload, headers=settings_headers)
+
     return
 
 def create_payload(token, birthday):
