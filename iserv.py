@@ -89,8 +89,6 @@ def change_birthday(username, password):
     settings_url = "https://fkggoettingen.de/iserv/profile/settings"
     form_response = session.get(url=settings_url)
 
-    print(form_response.text)
-
     # Get the Form Token
     token_regex = 'id="user_settings__token"[\\w\\W]*?value="([^"]*)"'
     token_match = re.search(token_regex, form_response.text)
@@ -104,8 +102,6 @@ def change_birthday(username, password):
     # Set the Settings Parameters
     settings_payload = 'user_settings%5Blang%5D=de_DE&user_settings%5Bhide_app_ad%5D=1&user_settings%5Bsort%5D=firstname&user_settings%5Bcolor-scheme%5D=dark&user_settings%5Bsave%5D=&user_settings%5B_token%5D=YOUR_TOKEN_HERE'
     settings_payload = settings_payload.replace('YOUR_TOKEN_HERE', token)
-
-    print(token)
 
     # Send Request to Change Settings
     settings_headers = {
