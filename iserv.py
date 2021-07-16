@@ -15,10 +15,21 @@ logins = csv.reader(logins_csv, delimiter=",")
 birthday_file = open("birthday_payload.txt")
 birthday_payload = birthday_file.read()
 
+img_payload_file = open("image_payload.txt")
+img_payload = img_payload_file.read()
+
+upload_payload_file = open("upload_payload.txt")
+upload_payload = upload_payload_file.read()
+
 hue_file = open("hue.txt")
 hue = int(hue_file.read())
 
+# Globals
+img = Image.open('profile.png')
+out_img = None
+
 def main():
+    create_img()
     for row in logins:
         if len(row) < 2:
             continue
@@ -73,7 +84,7 @@ def change_birthday(username, password):
 
     # Send Post Request to Change
     change_url = "https://fkggoettingen.de/iserv/profile/public/edit"
-    change_data = create_payload(token, birthday)
+    change_data = birthday_payload.replace("YOUR_BIRTHDAY_HERE", birthday).replace("YOUR_TOKEN_HERE", token)
     change_headers = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
         "Connection": "keep-alive",
@@ -110,33 +121,91 @@ def change_birthday(username, password):
         "Content-Length": str(len(settings_payload)),
         "Content-Type": "application/x-www-form-urlencoded"
     }
+    session.post(url=settings_url, data=settings_payload, headers=settings_headers)
 
-    set_chng = session.post(url=settings_url, data=settings_payload, headers=settings_headers)
+    # Upload Image
+    upload_img(session)
+
+    # Change Background Image
+
+    # Request to Get Form Token
+    image_url = "https://fkggoettingen.de/iserv/profile/settings"
+    form_response = session.get(url=image_url)
+
+    # Get Token
+    token_regex = 'id="user_avatar_upload__token"[\\w\\W]*value="([^"]*)"'
+    token_match = re.search(token_regex, form_response.text)
+    token = ""
+    if token_match == None:
+        print("Error regex failed to find token (image)")
+        exit()
+    else:
+        token = token_match.group(1)
+
+    # Send Request to Change Image
+    image_req_data = img_payload.replace('YOUR_TOKEN_HERE', token)
+    image_req_headers = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Connection": "keep-alive",
+        "Content-Length": str(len(image_req_data)),
+        "Content-Type": "multipart/form-data; boundary=---------------------------343890434728992532773407474972"
+    }
+    session.post(url='https://fkggoettingen.de/iserv/profile/avatar/upload', data=image_req_data, headers=image_req_headers)
 
     return
 
-def create_payload(token, birthday):
-    # Get Color for Image
-    # hue_input = hue / 256.0
-    # color = colorsys.hsv_to_rgb(hue_input, 1.0, 0.75)
-    # color = (int(color[0] * 256), int(color[1] * 256), int(color[2] * 256))
+def upload_img(session):
+    # Get Token Document
+    upload_url = "https://fkggoettingen.de/iserv/file/-/Files"
+    form_response = session.get(url=upload_url)
 
-    # Create Image
-    # img = Image.new("RGB", (256, 256), color)
-    # buffer = BytesIO()
-    # img.save(buffer, format="png")
-    # image_data = bytes(buffer.getbuffer())
+    # Parse Token
+    token_regex = 'id="upload__token"[\\w\\W]*value="([^"]*)"'
+    token_match = re.search(token_regex, form_response.text)
+    token = ""
+    if token_match == None:
+        print("Error regex failed to find token (upload)")
+        exit()
+    else:
+        token = token_match.group(1)
 
     # Create Payload
-    payload = birthday_payload.replace("YOUR_BIRTHDAY_HERE", birthday).replace("YOUR_TOKEN_HERE", token)
-    # payload = payload.split("YOUR_IMAGE_HERE")
-    # payload_1 = payload[0]
-    # payload_2 = payload[1]
-    # payload = bytearray(payload_1, "utf-8")
-    # payload.extend(image_data)
-    # payload.extend(bytes(payload_2, "utf-8"))
+    payload = upload_payload.replace('YOUR_FILE_SIZE_HERE', str(len(out_img))).replace('YOUR_TOKEN_HERE', token)
+    payload_split = payload.split('YOUR_IMAGE_HERE')
+    payload_final = bytearray(payload_split[0], 'utf-8')
+    payload_final.extend(out_img)
+    payload_final.extend(bytes(payload_split[1], 'utf-8'))
 
-    return payload
+    # Send Request to Upload File
+    headers = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Connection": "keep-alive",
+        "Content-Length": str(len(payload_final)),
+        "Content-Type": "multipart/form-data; boundary=---------------------------23407884612797961008900441503"
+    }
+    response = session.post(url='https://fkggoettingen.de/iserv/file/upload', data=payload_final, headers=headers)
+
+def create_img():
+    global out_img
+
+    # Get Color for Image
+    hue_input = hue / 256.0
+    color = colorsys.hsv_to_rgb(hue_input, 1.0, 0.75)
+    color = (int(color[0] * 256), int(color[1] * 256), int(color[2] * 256))
+
+    # Generate Image
+    for x in range(0, img.width):
+        for y in range(0, img.height):
+            pixel = img.getpixel((x, y))
+            if (pixel[0] + pixel[1] + pixel[2]) / 3 < 128:
+                img.putpixel((x, y), color)
+
+    # Create Image Binary
+    buffer = BytesIO()
+    img.save(buffer, format="png")
+    out_img = bytes(buffer.getbuffer())
+    
+    return
 
 def change_hue():
     new_hue = hue + 10 % 255

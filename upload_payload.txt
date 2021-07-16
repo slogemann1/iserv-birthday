@@ -1,0 +1,38 @@
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="dzuuid"
+
+3b3b4f5b-fffc-44fc-b044-00eb912da222
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="dzchunkindex"
+
+0
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="dztotalfilesize"
+
+7118
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="dzchunksize"
+
+2000000
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="dztotalchunkcount"
+
+1
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="dzchunkbyteoffset"
+
+0
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="upload[path]"
+
+Files
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="upload[_token]"
+
+7NHjGjWinayywfdRtmHlJT5f-lQ7VK3SjPuI2joB4fI
+-----------------------------23407884612797961008900441503
+Content-Disposition: form-data; name="file"; filename="img.png"
+Content-Type: application/octet-stream
+
+YOUR_IMAGE_HERE
+-----------------------------23407884612797961008900441503--

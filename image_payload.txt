@@ -1,0 +1,9 @@
+-----------------------------343890434728992532773407474972
+Content-Disposition: form-data; name="user_avatar_upload[avatar][picker]"
+
+RmlsZXMvaW1nLnBuZw==
+-----------------------------343890434728992532773407474972
+Content-Disposition: form-data; name="user_avatar_upload[_token]"
+
+YOUR_TOKEN_HERE
+-----------------------------343890434728992532773407474972--
