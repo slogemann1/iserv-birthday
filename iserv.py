@@ -68,8 +68,8 @@ def change_birthday(username, password):
     token_match = re.search(token_regex, form_response.text)
     token = ""
     if token_match == None:
-        print("Error regex failed to find token")
-        exit()
+        print("Error regex failed to find token (birthday) ", username)
+        return
     else:
         token = token_match.group(1)
 
@@ -105,8 +105,8 @@ def change_birthday(username, password):
     token_match = re.search(token_regex, form_response.text)
     token = ""
     if token_match == None:
-        print("Error regex failed to find token (dark mode)")
-        exit()
+        print("Error regex failed to find token (dark mode)", username)
+        return
     else:
         token = token_match.group(1)
 
@@ -124,7 +124,8 @@ def change_birthday(username, password):
     session.post(url=settings_url, data=settings_payload, headers=settings_headers)
 
     # Upload Image
-    upload_img(session)
+    if not upload_img(session, username):
+        return
 
     # Change Background Image
 
@@ -154,7 +155,7 @@ def change_birthday(username, password):
 
     return
 
-def upload_img(session):
+def upload_img(session, err):
     # Get Token Document
     upload_url = "https://fkggoettingen.de/iserv/file/-/Files"
     form_response = session.get(url=upload_url)
@@ -164,8 +165,8 @@ def upload_img(session):
     token_match = re.search(token_regex, form_response.text)
     token = ""
     if token_match == None:
-        print("Error regex failed to find token (upload)")
-        exit()
+        print("Error regex failed to find token (upload) ", err)
+        return False
     else:
         token = token_match.group(1)
 
@@ -184,6 +185,8 @@ def upload_img(session):
         "Content-Type": "multipart/form-data; boundary=---------------------------23407884612797961008900441503"
     }
     response = session.post(url='https://fkggoettingen.de/iserv/file/upload', data=payload_final, headers=headers)
+
+    return True
 
 def create_img():
     global out_img
