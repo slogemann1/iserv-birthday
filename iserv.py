@@ -7,6 +7,7 @@ from PIL import Image
 import random
 import colorsys
 from io import BytesIO
+import uuid
 
 # Read files
 logins_csv = open("logins.txt")
@@ -171,7 +172,7 @@ def upload_img(session, err):
         token = token_match.group(1)
 
     # Create Payload
-    payload = upload_payload.replace('YOUR_FILE_SIZE_HERE', str(len(out_img))).replace('YOUR_TOKEN_HERE', token)
+    payload = upload_payload.replace('YOUR_FILE_SIZE_HERE', str(len(out_img))).replace('YOUR_TOKEN_HERE', token).replace('YOUR_UUID_HERE', str(uuid.uuid4()))
     payload_split = payload.split('YOUR_IMAGE_HERE')
     payload_final = bytearray(payload_split[0], 'utf-8')
     payload_final.extend(out_img)
